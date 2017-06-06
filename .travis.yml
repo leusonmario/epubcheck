@@ -1,14 +1,11 @@
 language: java
 sudo: required
-dist: precise
+dist: trusty
 group: edge
 jdk:
   - oraclejdk7
   - oraclejdk8
   - oraclejdk9
-matrix:
-  allow_failures:
-    - jdk: oraclejdk9
 before_install: .travis/before_install.sh
 script: mvn verify
 after_success: .travis/after_success.sh
