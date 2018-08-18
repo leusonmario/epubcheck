@@ -1,12 +1,25 @@
+
+sudo: required
 language: java
-before_install: .travis/before_install.sh
-script: mvn verify
-after_success: .travis/after_success.sh
-branches:
-  only:
-  - master
-  - contrib/nook
-env:
-  global:
-  - secure: gcpUIktuajGHvn95bzMg9Nqay+kGAdKXWOosA6sQHvaK+KCsiP4nhAMX5rWUYvk3XnEs2WlfZUBO7/aDcpX4fjZozs8fHbVuSfftYP+4MIIhEI2FNEXp823EShSRB32cGmEkdUh7OQdv5zN8SEQNW9MJguLSvTkp2FGYEsV3x1g=
-  - secure: jMv0M898kWiSKiPaky7CpCcvC3QqzEWwauOsmx9WuRNLFO3e/tuM/bPx+06wWlBgy359uPlSFaOch4QFlDx/CTCLtIudpF7cx4Raej9F3yVdqLnT2/9W88Oi5Vxhak1Szs3MUmVWbIqd5ulf2jsV1hMHJVn2tg3i1KYqmFyQ7+A=
+
+jdk:
+  - oraclejdk8
+
+script:
+  - mvn clean cobertura:cobertura -Dtest=Epub30CheckTest#testDuplicateZipEntriesIssue265b -DfailIfNoTests=false
+
+before_deploy:
+- tar -zcvf coverage-result.tar.gz /home/travis/build/leusonmario/epubcheck/target/site/cobertura
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "Y5xWsvd9euQSKaMyg/oVd+LF2DY+Q2VslpMrb9oMUsSYIPEYqHwMFv5NyoUcorpRdNqFwZdaHi4ZQ/bEaCbGdXWLOsLXAU8IQ0nCt8JpSTTfMtG4OfgBL31oLIup1BTtV2YElrEeTR9gawDEvGfmGgPcDxINnWjg4q69Umci5Zw9W4Snr6g2D6/TlM/YajMHIzP1gRvXA1BpVmAMRQUEL4lsFgPfAZckSXz/PoBhrdKxwX0XMy1PJ1i3N3+RaHzOXSi3V9c/cvX4uj13Y/pR62au0OJPOBQwidOxRwHwv3SsIXD37t0pI/+3Mh1ylYNWLaODOGVpVwlXzMXFKS14OcOC4m3ZiYnu8bM67Wd3rRWri7WfnfHpzUV22JPRLovqZJGOdalxXemAqXcQK0GQhY7xct7n72UZL84mgg9oTekHq0mk/1CnnjY1lmDo0wptUQFLxbZ4JE+a2fjLVIGznj+jXWIBx2Devkg8FtCwehXwbsZxyjA/bDVPUTkED4gBeTZvUYszQ4anhQnq/67HTh12ugw45JI0QPZcZEPG+5x99Qfa7TPJve1xkJL0d5TQBl6i7rL1ueESSZQoU1WplLTwwmpFsq1a3o7hb9N5F7yneAhUxBifLnToNNlnvO7+OE+hZIycCzxlNmqBfXs6DXaX6a3DSkXXPkCIgGf92FM="
+
+
+  file: coverage-result.tar.gz
+  file_glob: true
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
